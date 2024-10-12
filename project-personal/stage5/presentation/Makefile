@@ -15,7 +15,7 @@ PDF_OPTIONS += --number-sections
 REVEALJS_THEME = beige
 
 %.pdf: %.md
-	-@pandoc "$<" $(FILTERS) $(PDF_ENGINE) $(PDF_OPTIONS) $(PDF_FORMAT_OPTIONS) -o "$@"
+	-@pandoc presentation.md --pdf-engine=pdflatex -t beamer -o presentation.pdf
 
 %.html: %.md
 	-@pandoc "$<" --embed-resources --standalone -t revealjs -V theme=$(REVEALJS_THEME) -o "$@"
