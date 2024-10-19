@@ -1,26 +1,35 @@
 import random
 import string
-from random import seed
 
-def xor_text_f(text, key):
-    if len(key) != len(text): print("ERORR!!!!")
-    xor_text =''
+def generate_key_hex(text):
+    key = ''
     for i in range(len(text)):
-        xor_text_sym = ord(text[i]) ^ ord(key[i])
-        xor_text += chr(xor_text_sym)
-    return xor_text
+        key += random.choice(string.ascii_letters + string.digits) #генерация цифры для каждого символа в тексте
+    return key
 
-text1 = "С Новым Годом, друзья!"
-key = ''
-seed(22)
-for i in range(len(text)):
-    key += random.choice(string.ascii_letters + string.digits)
+#для шифрования и дешифрования
+def en_de_crypt(text, key):
+    new_text = ''
+    for i in range(len(text)): #проход по каждому символу в тексте
+        new_text += chr(ord(text[i]) ^ ord(key[i % len(key)]))
+    return new_text
 
-xor_text_it = xor_text_f(text, key)
-key_f = xor_text_f(text, xor_text_it)
-textt = xor_text_f(xor_text_it, key_f)
+def find_possible_key(text, fragment):
+    possible_keys = []
+    for i in range(len(text) - len(fragment) + 1):
+        possible_key = ""
+        for j in range(len(fragment)):
+            possible_key += chr(ord(text[i + j]) ^ ord(fragment[j]))
+        possible_keys.append(possible_key)
+    return possible_keys
 
+t = 'С Новым Годом, друзья!'
+key = generate_key_hex(t)
+en_t = en_de_crypt(t, key)
+de_t = en_de_crypt(en_t, key)
+keys_t_f = find_possible_key(en_t, 'С Новым')
+fragment = "С Новым"
+print('Открытый текст: ', t, "\nКлюч: ", key, '\nШифротекст: ', en_t, '\nИсходный текст: ', de_t,)
 
-print("Ключ шифрования: " + key_f)
-print("Зашифрованный текст: " + xor_text_it)
-print("Рашифрованный текст с помощью ключа: " + textt)
+print('Возможные ключи: ', keys_t_f)
+print('Расшифрованный фрагмент: ', en_de_crypt(en_t, keys_t_f[0]))
